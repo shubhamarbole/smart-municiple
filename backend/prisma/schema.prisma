@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Department {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique // Water, Roads, Electricity, etc.
+  users User[]
+  issues IssueDepartment[]
+  complaintAssignments ComplaintAssignment[]
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("FIELD_WORKER") // ADMIN, FIELD_WORKER, CITIZEN
+  departmentId Int?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  createdIssues Issue[]    @relation("IssueCreator")
+  issueLogs     IssueLog[]
+}
+
+model Issue {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  status      String   @default("OPEN")
+  priority    String   @default("MEDIUM")
+  latitude    Float?
+  longitude   Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  creatorId   Int
+  createdBy   User     @relation("IssueCreator", fields: [creatorId], references: [id])
+
+  departments IssueDepartment[]
+  logs        IssueLog[]
+  complaint   Complaint?
+}
+
+model IssueDepartment {
+  issueId      Int
+  departmentId Int
+  issue        Issue      @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@id([issueId, departmentId])
+}
+
+model IssueLog {
+  id                Int      @id @default(autoincrement())
+  issueId           Int
+  userId            Int
+  actionDescription String
+  timestamp         DateTime @default(now())
+
+  issue             Issue    @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  user              User     @relation(fields: [userId], references: [id])
+}
+
+model Complaint {
+  id          Int      @id @default(autoincrement())
+  citizenName String?
+  description String
+  issue_type  String?  // Water, Roads, Electricity, Other
+  location    String?
+  media_url   String?  // uploaded photo/video URL or path
+  latitude    Float?
+  longitude   Float?
+  status      String   @default("RECEIVED") // RECEIVED, ASSIGNED, IN_PROGRESS, RESOLVED, CLOSED
+  is_flagged  Boolean  @default(false)       // spam/fake flag
+  created_by  Int?                           // nullable citizen user id
+  createdAt   DateTime @default(now())
+  issueId     Int?     @unique
+
+  issue       Issue?   @relation(fields: [issueId], references: [id])
+  assignments ComplaintAssignment[]
+}
+
+model ComplaintAssignment {
+  complaintId  Int
+  departmentId Int
+
+  complaint    Complaint  @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@id([complaintId, departmentId])
+}
