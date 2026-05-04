@@ -14,6 +14,33 @@ const departmentKeywords = {
   Electricity: ['wire', 'pole', 'power', 'electricity', 'blackout', 'spark', 'light', 'outage'],
 };
 
+// GET /api/complaints  – Get all public complaints
+router.get('/', async (req, res) => {
+  try {
+    const complaints = await prisma.complaint.findMany({
+      include: { assignments: { include: { department: true } } },
+      orderBy: { createdAt: 'desc' },
+    });
+    
+    // Return a safe public view
+    const publicComplaints = complaints.map(complaint => ({
+      id: complaint.id,
+      trackingId: `CMP-${complaint.id}`,
+      issue_type: complaint.issue_type,
+      description: complaint.description,
+      location: complaint.location,
+      status: complaint.status,
+      createdAt: complaint.createdAt,
+      assignedDepartments: complaint.assignments.map(a => a.department.name),
+    }));
+
+    res.json(publicComplaints);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // POST /api/complaints  – Submit a public complaint
 router.post('/', async (req, res) => {
   try {

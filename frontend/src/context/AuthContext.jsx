@@ -43,8 +43,17 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const register = async (name, email, password, role = 'FIELD_WORKER') => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5000"}/api/auth/register`, { name, email, password, role });
+      return { success: true, userId: response.data.userId };
+    } catch (error) {
+      return { success: false, error: error.response?.data?.error || 'Registration failed' };
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, register, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );

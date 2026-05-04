@@ -10,6 +10,7 @@ import ComplaintDetail from './pages/ComplaintDetail';
 import PublicComplaintForm from './pages/PublicComplaintForm';
 import CitizenLanding from './pages/CitizenLanding';
 import CitizenTrack from './pages/CitizenTrack';
+import Signup from './pages/Signup';
 
 const PrivateRoute = ({ children }) => {
   const { user } = useAuth();
@@ -22,6 +23,7 @@ function App() {
       <Routes>
         <Route path="/report" element={<PublicComplaintForm />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         
         <Route path="/" element={<CitizenLanding />} />
         <Route path="/track" element={<CitizenTrack />} />

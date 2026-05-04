@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
@@ -72,6 +72,10 @@ const Login = () => {
         <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
           <p>Demo Admin: admin@portal.com / admin123</p>
           <p>Demo Officer: roads@portal.com / user123</p>
+        </div>
+        
+        <div style={{ marginTop: '1rem', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+          <p>Don't have an account? <Link to="/signup" style={{ color: 'var(--primary)', fontWeight: '500', textDecoration: 'none' }}>Sign Up here</Link></p>
         </div>
       </div>
     </div>
