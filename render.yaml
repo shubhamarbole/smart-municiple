@@ -22,4 +22,4 @@ services:
     startCommand: npx serve -s dist
     envVars:
       - key: VITE_API_BASE_URL
-        value: https://municipal-backend.onrender.com
+        value: https://municipal-backend-0lzb.onrender.com
