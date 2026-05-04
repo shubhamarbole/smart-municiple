@@ -21,3 +21,17 @@ services:
         value: 10000
       - key: JWT_SECRET
         generateValue: true
+
+  - type: static
+    name: municipal-frontend
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://municipal-backend.onrender.com
