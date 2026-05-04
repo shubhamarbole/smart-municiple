@@ -22,7 +22,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
 
-  - type: static
+  - type: static_site
     name: municipal-frontend
     plan: free
     rootDir: frontend
