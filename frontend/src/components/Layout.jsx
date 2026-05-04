@@ -34,11 +34,11 @@ const Sidebar = () => {
       </div>
 
       <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        <Link to="/" style={{ 
+        <Link to="/dashboard" style={{ 
           display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem 1rem', borderRadius: '8px',
-          background: location.pathname === '/' ? 'rgba(79, 70, 229, 0.15)' : 'transparent',
-          color: location.pathname === '/' ? 'var(--primary)' : 'var(--text-secondary)',
-          fontWeight: location.pathname === '/' ? 600 : 400,
+          background: location.pathname.startsWith('/dashboard') ? 'rgba(79, 70, 229, 0.15)' : 'transparent',
+          color: location.pathname.startsWith('/dashboard') ? 'var(--primary)' : 'var(--text-secondary)',
+          fontWeight: location.pathname.startsWith('/dashboard') ? 600 : 400,
           transition: 'all 0.2s'
         }}>
           <LayoutDashboard size={20} />

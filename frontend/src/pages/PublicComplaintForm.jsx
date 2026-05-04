@@ -189,12 +189,17 @@ const PublicComplaintForm = () => {
 
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-          <div>
-            <h1 style={{ fontSize: '1.8rem', fontWeight: 700, margin: 0 }}>🏛️ Municipal Portal</h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.25rem' }}>Report and track city issues</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <Link to="/" style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.05)', width: '40px', height: '40px', borderRadius: '50%', textDecoration: 'none' }}>
+              ←
+            </Link>
+            <div>
+              <h1 style={{ fontSize: '1.8rem', fontWeight: 700, margin: 0 }}>🏛️ Municipal Portal</h1>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.25rem' }}>Report and track city issues</p>
+            </div>
           </div>
           <Link to="/login" className="btn" style={{ background: 'rgba(255,255,255,0.08)', fontSize: '0.85rem' }}>
-            Admin Login
+            Staff Login
           </Link>
         </div>
 
