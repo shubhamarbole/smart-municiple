@@ -8,16 +8,18 @@ const router = express.Router();
 router.get('/seed', async (req, res) => {
   try {
     const adminPass = await bcrypt.hash('admin123', 10);
-    const existingAdmin = await prisma.user.findUnique({ where: { email: 'admin@portal.com' } });
-    
-    if (!existingAdmin) {
-      await prisma.user.create({
-        data: { name: 'Super Admin', email: 'admin@portal.com', passwordHash: adminPass, role: 'ADMIN' }
-      });
-      return res.json({ message: 'Seed successful! Admin created.' });
-    }
-    
-    return res.json({ message: 'Admin already exists.' });
+    const userPass = await bcrypt.hash('user123', 10);
+
+    const water = await prisma.department.upsert({ where: { name: 'Water' }, update: {}, create: { name: 'Water' } });
+    const roads = await prisma.department.upsert({ where: { name: 'Roads' }, update: {}, create: { name: 'Roads' } });
+    const electricity = await prisma.department.upsert({ where: { name: 'Electricity' }, update: {}, create: { name: 'Electricity' } });
+
+    await prisma.user.upsert({ where: { email: 'admin@portal.com' }, update: { passwordHash: adminPass }, create: { name: 'Super Admin', email: 'admin@portal.com', passwordHash: adminPass, role: 'ADMIN' } });
+    await prisma.user.upsert({ where: { email: 'water@portal.com' }, update: { passwordHash: userPass }, create: { name: 'Water Dept', email: 'water@portal.com', passwordHash: userPass, role: 'DEPT_OFFICER', departmentId: water.id } });
+    await prisma.user.upsert({ where: { email: 'roads@portal.com' }, update: { passwordHash: userPass }, create: { name: 'Roads Dept', email: 'roads@portal.com', passwordHash: userPass, role: 'DEPT_OFFICER', departmentId: roads.id } });
+    await prisma.user.upsert({ where: { email: 'electricity@portal.com' }, update: { passwordHash: userPass }, create: { name: 'Electricity Dept', email: 'electricity@portal.com', passwordHash: userPass, role: 'DEPT_OFFICER', departmentId: electricity.id } });
+
+    res.json({ message: 'Full Seed successful! Admin, Water, Roads, and Electricity users created.' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
