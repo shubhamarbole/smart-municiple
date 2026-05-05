@@ -5,6 +5,24 @@ import prisma from '../prismaClient.js';
 
 const router = express.Router();
 
+router.get('/seed', async (req, res) => {
+  try {
+    const adminPass = await bcrypt.hash('admin123', 10);
+    const existingAdmin = await prisma.user.findUnique({ where: { email: 'admin@portal.com' } });
+    
+    if (!existingAdmin) {
+      await prisma.user.create({
+        data: { name: 'Super Admin', email: 'admin@portal.com', passwordHash: adminPass, role: 'ADMIN' }
+      });
+      return res.json({ message: 'Seed successful! Admin created.' });
+    }
+    
+    return res.json({ message: 'Admin already exists.' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password, role, departmentId } = req.body;
