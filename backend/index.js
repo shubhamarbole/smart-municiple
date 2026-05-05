@@ -16,13 +16,16 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: true,
+    origin: ['https://municipal-frontend-9ovb.onrender.com', 'http://localhost:5173'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
   }
 });
 
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ 
+  origin: ['https://municipal-frontend-9ovb.onrender.com', 'http://localhost:5173'], 
+  credentials: true 
+}));
 app.use(express.json());
 
 // Make io accessible to all route handlers
