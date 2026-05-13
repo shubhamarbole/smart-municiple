@@ -1,7 +1,16 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FilePlus, Search, ShieldCheck, Zap, Droplets, Map } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const CitizenLanding = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Navbar */}
@@ -15,7 +24,20 @@ const CitizenLanding = () => {
             <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Citizen Portal</span>
           </div>
         </div>
-        <Link to="/login" className="btn btn-secondary">Staff Login</Link>
+        {user ? (
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <span style={{ color: 'white', fontWeight: 500, marginRight: '0.5rem' }}>Hello, {user.name}</span>
+            {user.role !== 'CITIZEN' && (
+              <Link to="/dashboard" className="btn btn-secondary" style={{ background: 'transparent', border: '1px solid var(--border)' }}>Dashboard</Link>
+            )}
+            <button onClick={handleLogout} className="btn" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#F87171', border: '1px solid rgba(239,68,68,0.2)' }}>Logout</button>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <Link to="/login" className="btn btn-secondary" style={{ background: 'transparent', border: '1px solid var(--border)' }}>Sign In</Link>
+            <Link to="/signup" className="btn btn-primary">Sign Up</Link>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section */}

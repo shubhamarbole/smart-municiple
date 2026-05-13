@@ -19,7 +19,11 @@ const Login = () => {
     const result = await login(email, password);
     
     if (result.success) {
-      navigate('/dashboard');
+      if (result.user.role === 'CITIZEN') {
+        navigate('/');
+      } else {
+        navigate('/dashboard');
+      }
     } else {
       setError(result.error);
     }

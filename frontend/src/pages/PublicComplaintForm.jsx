@@ -3,7 +3,8 @@ import axios from 'axios';
 import { Camera, MapPin, Send, AlertTriangle, CheckCircle, Image as ImageIcon, Search } from 'lucide-react';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 // Fix Leaflet's default icon path issues with Vite
 delete L.Icon.Default.prototype._getIconUrl;
@@ -14,6 +15,7 @@ L.Icon.Default.mergeOptions({
 });
 
 const PublicComplaintForm = () => {
+  const { user } = useAuth();
   const [tab, setTab] = useState('submit'); // 'submit' | 'track'
   const [formData, setFormData] = useState({
     citizenName: '',
@@ -40,6 +42,10 @@ const PublicComplaintForm = () => {
   const [trackLoading, setTrackLoading] = useState(false);
 
   const fileInputRef = useRef(null);
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -101,13 +107,14 @@ const PublicComplaintForm = () => {
       // In production, use FormData + multer to upload media.
       // Here we simulate by sending the file name as media_url if selected.
       const payload = {
-        citizenName: formData.citizenName,
+        citizenName: formData.citizenName || user.name,
         issue_type: formData.issue_type,
         description: formData.description,
         latitude: formData.latitude,
         longitude: formData.longitude,
         location: formData.locationText,
         media_url: mediaFile ? mediaFile.name : null,
+        created_by: user.id,
       };
 
       const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5000"}/api/complaints`, payload);
@@ -198,9 +205,9 @@ const PublicComplaintForm = () => {
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.25rem' }}>Report and track city issues</p>
             </div>
           </div>
-          <Link to="/login" className="btn" style={{ background: 'rgba(255,255,255,0.08)', fontSize: '0.85rem' }}>
-            Staff Login
-          </Link>
+          <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+            Logged in as <strong style={{ color: 'white' }}>{user.name}</strong>
+          </div>
         </div>
 
         {/* Tabs */}
